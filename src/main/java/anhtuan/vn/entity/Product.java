@@ -17,11 +17,12 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(columnDefinition = "NVARCHAR(255)")
     private String title;
 
     private Integer quantity;
 
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "NVARCHAR(1000)")
     private String desc;
 
     private Double price;

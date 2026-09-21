@@ -1,0 +1,3110 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài tập 8 - Quản lý sản phẩm</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --navy: #0f172a;
+            --navy-2: #1e293b;
+
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-soft: #eef2ff;
+
+            --cyan: #06b6d4;
+            --cyan-soft: #ecfeff;
+
+            --green: #10b981;
+            --green-soft: #ecfdf5;
+
+            --orange: #f59e0b;
+            --orange-soft: #fff7ed;
+
+            --red: #ef4444;
+            --red-soft: #fef2f2;
+
+            --bg: #f5f7fb;
+            --surface: #ffffff;
+
+            --text: #172033;
+            --muted: #64748b;
+
+            --border: #e7eaf0;
+
+            --shadow:
+                0 10px 30px rgba(15, 23, 42, 0.07);
+
+            --shadow-lg:
+                0 18px 45px rgba(15, 23, 42, 0.10);
+
+            --radius: 18px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background:
+                linear-gradient(
+                    180deg,
+                    #eef2ff 0,
+                    #f8fafc 240px,
+                    var(--bg) 241px
+                );
+            color: var(--text);
+        }
+
+        svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        /* ======================================================
+           TOP NAV
+        ====================================================== */
+
+        .top-nav {
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 4%;
+            background: rgba(15, 23, 42, 0.97);
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+            box-shadow:
+                0 10px 30px rgba(15, 23, 42, 0.12);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo {
+            width: 42px;
+            height: 42px;
+            border-radius: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background:
+                linear-gradient(
+                    135deg,
+                    #6366f1,
+                    #8b5cf6
+                );
+            box-shadow:
+                0 8px 20px rgba(99, 102, 241, 0.35);
+        }
+
+        .brand-logo svg {
+            width: 23px;
+            height: 23px;
+        }
+
+        .brand-text strong {
+            display: block;
+            font-size: 16px;
+        }
+
+        .brand-text span {
+            display: block;
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 9px 13px;
+            border-radius: 10px;
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: 0.18s;
+        }
+
+        .nav-link svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,0.08);
+            color: white;
+        }
+
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(16,185,129,0.13);
+            color: #6ee7b7;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #34d399;
+            box-shadow:
+                0 0 0 5px rgba(52,211,153,0.10);
+        }
+
+        /* ======================================================
+           PAGE
+        ====================================================== */
+
+        .page {
+            width: 94%;
+            max-width: 1480px;
+            margin: 0 auto;
+            padding: 28px 0 50px;
+        }
+
+        /* ======================================================
+           HERO
+        ====================================================== */
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            padding: 34px;
+            border-radius: 24px;
+            background:
+                linear-gradient(
+                    125deg,
+                    #111827 0%,
+                    #1e1b4b 48%,
+                    #312e81 100%
+                );
+            color: white;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 22px;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            top: -170px;
+            right: -100px;
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(99,102,241,0.35),
+                    rgba(99,102,241,0)
+                );
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            bottom: -170px;
+            right: 120px;
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(6,182,212,0.20),
+                    rgba(6,182,212,0)
+                );
+        }
+
+        .hero-inner {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+            gap: 28px;
+            align-items: center;
+        }
+
+        .hero-left {
+            max-width: 760px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 7px 11px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.09);
+            color: #c7d2fe;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 13px;
+        }
+
+        .eyebrow svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        .hero h1 {
+            font-size: 31px;
+            line-height: 1.2;
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            color: #cbd5e1;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .hero-tech {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 9px;
+            min-width: 280px;
+        }
+
+        .tech-item {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 11px 12px;
+            border-radius: 13px;
+            border: 1px solid rgba(255,255,255,0.09);
+            background: rgba(255,255,255,0.06);
+            font-size: 12px;
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+
+        .tech-item svg {
+            width: 16px;
+            height: 16px;
+            color: #a5b4fc;
+        }
+
+        /* ======================================================
+           STATS
+        ====================================================== */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(3, minmax(0,1fr));
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            border-radius: 17px;
+            padding: 19px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            flex: 0 0 50px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-icon svg {
+            width: 23px;
+            height: 23px;
+        }
+
+        .stat-icon.purple {
+            color: #4f46e5;
+            background: #eef2ff;
+        }
+
+        .stat-icon.green {
+            color: #059669;
+            background: #ecfdf5;
+        }
+
+        .stat-icon.orange {
+            color: #d97706;
+            background: #fff7ed;
+        }
+
+        .stat-info span {
+            display: block;
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 5px;
+        }
+
+        .stat-info strong {
+            font-size: 25px;
+            line-height: 1;
+        }
+
+        /* ======================================================
+           CARD
+        ====================================================== */
+
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 22px;
+            margin-bottom: 22px;
+        }
+
+        .card-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 19px;
+        }
+
+        .heading {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .heading-icon {
+            width: 40px;
+            height: 40px;
+            flex: 0 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            color: var(--primary);
+            background: var(--primary-soft);
+        }
+
+        .heading-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .heading h2 {
+            font-size: 18px;
+            line-height: 1.3;
+        }
+
+        .heading p {
+            margin-top: 4px;
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.55;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .badge.green {
+            background: var(--green-soft);
+            color: #059669;
+        }
+
+        .badge.purple {
+            background: var(--primary-soft);
+            color: var(--primary);
+        }
+
+        .badge svg {
+            width: 13px;
+            height: 13px;
+        }
+
+        /* ======================================================
+           FORMS
+        ====================================================== */
+
+        .forms-grid {
+            display: grid;
+            grid-template-columns:
+                1.08fr 0.92fr;
+            gap: 22px;
+        }
+
+        .field-row {
+            display: grid;
+            grid-template-columns:
+                1fr 1fr;
+            gap: 12px;
+        }
+
+        .field {
+            margin-bottom: 14px;
+        }
+
+        .field label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 800;
+            color: #475569;
+            margin-bottom: 7px;
+        }
+
+        .field label svg {
+            width: 14px;
+            height: 14px;
+            color: #818cf8;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            border: 1px solid #dce1ea;
+            border-radius: 11px;
+            background: white;
+            color: var(--text);
+            padding: 11px 12px;
+            font-size: 13px;
+            outline: none;
+            transition: 0.18s;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #a5adba;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #818cf8;
+            box-shadow:
+                0 0 0 4px rgba(99,102,241,0.08);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .helper {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 5px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 9px;
+            margin-top: 4px;
+        }
+
+        button {
+            border: none;
+            border-radius: 10px;
+            padding: 10px 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            font-size: 12px;
+            font-weight: 800;
+            transition: 0.16s;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+        }
+
+        button svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .btn-primary {
+            color: white;
+            background:
+                linear-gradient(
+                    135deg,
+                    #4f46e5,
+                    #6366f1
+                );
+            box-shadow:
+                0 7px 15px rgba(79,70,229,0.18);
+        }
+
+        .btn-primary:hover {
+            box-shadow:
+                0 10px 20px rgba(79,70,229,0.24);
+        }
+
+        .btn-light {
+            color: #475569;
+            background: #f1f5f9;
+        }
+
+        .btn-light:hover {
+            background: #e9eef5;
+        }
+
+        .btn-edit {
+            color: #4f46e5;
+            background: #eef2ff;
+        }
+
+        .btn-delete {
+            color: #dc2626;
+            background: #fef2f2;
+        }
+
+        .btn-sm {
+            padding: 7px 9px;
+            border-radius: 9px;
+        }
+
+        .btn-sm svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* ======================================================
+           FILTER
+        ====================================================== */
+
+        .filter-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 11px;
+        }
+
+        .filter-row .field {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .filter-row button {
+            min-width: 135px;
+        }
+
+        /* ======================================================
+           TABLE
+        ====================================================== */
+
+        .table-wrap {
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            margin-top: 18px;
+        }
+
+        table {
+            width: 100%;
+            min-width: 800px;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        thead {
+            background: #f8fafc;
+        }
+
+        th {
+            padding: 12px 13px;
+            text-align: left;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.55px;
+            color: #64748b;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 12px 13px;
+            border-top: 1px solid #edf0f5;
+            font-size: 12px;
+            color: #475569;
+            vertical-align: middle;
+        }
+
+        tbody tr {
+            transition: 0.15s;
+        }
+
+        tbody tr:hover {
+            background: #fafbff;
+        }
+
+        .id-tag {
+            color: #94a3b8;
+            font-weight: 700;
+        }
+
+        .product-name {
+            color: #1e293b;
+            font-weight: 800;
+        }
+
+        .price {
+            color: #059669;
+            font-weight: 800;
+        }
+
+        .category-pill {
+            display: inline-flex;
+            padding: 5px 9px;
+            border-radius: 999px;
+            color: #4f46e5;
+            background: #eef2ff;
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        .empty-state {
+            margin-top: 18px;
+            padding: 27px;
+            text-align: center;
+            color: var(--muted);
+            border-radius: 13px;
+            border: 1px dashed #d8dde6;
+            background: #fafbfc;
+        }
+
+        .empty-icon {
+            width: 44px;
+            height: 44px;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 13px;
+            background: var(--primary-soft);
+            color: var(--primary);
+        }
+
+        .empty-icon svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .message {
+            min-height: 18px;
+            margin-top: 10px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .success {
+            color: #059669;
+        }
+
+        .error {
+            color: #dc2626;
+        }
+
+        /* ======================================================
+           TOAST
+        ====================================================== */
+
+        .toast-wrap {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            min-width: 270px;
+            max-width: 360px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 13px 14px;
+            border-radius: 12px;
+            color: white;
+            box-shadow:
+                0 15px 35px rgba(15,23,42,0.18);
+            animation:
+                toastIn 0.25s ease;
+        }
+
+        .toast.success {
+            background: #059669;
+        }
+
+        .toast.error {
+            background: #dc2626;
+        }
+
+        .toast svg {
+            width: 18px;
+            height: 18px;
+            flex: 0 0 18px;
+            margin-top: 1px;
+        }
+
+        .toast strong {
+            display: block;
+            font-size: 12px;
+        }
+
+        .toast span {
+            display: block;
+            font-size: 11px;
+            opacity: 0.88;
+            line-height: 1.5;
+            margin-top: 2px;
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ======================================================
+           FOOTER
+        ====================================================== */
+
+        .footer {
+            text-align: center;
+            padding: 6px 0 0;
+            color: #94a3b8;
+            font-size: 11px;
+        }
+
+        /* ======================================================
+           RESPONSIVE
+        ====================================================== */
+
+        @media (max-width: 1050px) {
+            .hero-inner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .hero-tech {
+                width: 100%;
+            }
+
+            .forms-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .nav-links {
+                display: none;
+            }
+
+            .status-pill {
+                display: none;
+            }
+
+            .page {
+                width: 92%;
+            }
+
+            .hero {
+                padding: 25px;
+            }
+
+            .hero h1 {
+                font-size: 25px;
+            }
+
+            .hero-tech {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .field-row {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-row button {
+                width: 100%;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .card-head {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ======================================================
+     NAVIGATION
+====================================================== -->
+
+<nav class="top-nav">
+
+    <div class="brand">
+
+        <div class="brand-logo">
+            <svg viewBox="0 0 24 24">
+                <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+                <path d="m3.3 7 8.7 5 8.7-5"/>
+                <path d="M12 22V12"/>
+            </svg>
+        </div>
+
+        <div class="brand-text">
+            <strong>Bài tập 8</strong>
+            <span>GraphQL Management</span>
+        </div>
+
+    </div>
+
+    <div class="nav-links">
+
+        <a href="#overview" class="nav-link">
+            <svg viewBox="0 0 24 24">
+                <rect x="3" y="3" width="7" height="7"/>
+                <rect x="14" y="3" width="7" height="7"/>
+                <rect x="3" y="14" width="7" height="7"/>
+                <rect x="14" y="14" width="7" height="7"/>
+            </svg>
+            Tổng quan
+        </a>
+
+        <a href="#products" class="nav-link">
+            <svg viewBox="0 0 24 24">
+                <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+            </svg>
+            Sản phẩm
+        </a>
+
+        <a href="#categories" class="nav-link">
+            <svg viewBox="0 0 24 24">
+                <rect x="3" y="3" width="7" height="7"/>
+                <rect x="14" y="3" width="7" height="7"/>
+                <rect x="3" y="14" width="7" height="7"/>
+                <rect x="14" y="14" width="7" height="7"/>
+            </svg>
+            Danh mục
+        </a>
+
+    </div>
+
+    <div class="status-pill">
+        <span class="status-dot"></span>
+        Hệ thống hoạt động
+    </div>
+
+</nav>
+
+
+<!-- ======================================================
+     PAGE
+====================================================== -->
+
+<div class="page">
+
+    <!-- HERO -->
+
+    <section class="hero" id="overview">
+
+        <div class="hero-inner">
+
+            <div class="hero-left">
+
+                <div class="eyebrow">
+                    <svg viewBox="0 0 24 24">
+                        <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/>
+                    </svg>
+                    Hệ thống quản trị dữ liệu
+                </div>
+
+                <h1>Quản lý sản phẩm bằng GraphQL</h1>
+
+                <p>
+                    Ứng dụng Spring Boot sử dụng GraphQL API, SQL Server và AJAX
+                    để quản lý sản phẩm, danh mục và các mối quan hệ dữ liệu
+                    trực tiếp trên một giao diện quản trị hiện đại.
+                </p>
+
+            </div>
+
+            <div class="hero-tech">
+
+                <div class="tech-item">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M8 9l3 3-3 3"/>
+                        <path d="M13 15h3"/>
+                        <rect x="3" y="4" width="18" height="16" rx="2"/>
+                    </svg>
+                    Spring Boot
+                </div>
+
+                <div class="tech-item">
+                    <svg viewBox="0 0 24 24">
+                        <polygon points="12 2 20 7 20 17 12 22 4 17 4 7 12 2"/>
+                        <line x1="4" y1="7" x2="20" y2="17"/>
+                        <line x1="20" y1="7" x2="4" y2="17"/>
+                    </svg>
+                    GraphQL
+                </div>
+
+                <div class="tech-item">
+                    <svg viewBox="0 0 24 24">
+                        <ellipse cx="12" cy="5" rx="9" ry="3"/>
+                        <path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5"/>
+                        <path d="M3 12c0 1.7 4 3 9 3s9-1.3 9-3"/>
+                    </svg>
+                    SQL Server
+                </div>
+
+                <div class="tech-item">
+                    <svg viewBox="0 0 24 24">
+                        <polyline points="16 18 22 12 16 6"/>
+                        <polyline points="8 6 2 12 8 18"/>
+                    </svg>
+                    AJAX
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- STATS -->
+
+    <section class="stats-grid">
+
+        <div class="stat-card">
+
+            <div class="stat-icon purple">
+                <svg viewBox="0 0 24 24">
+                    <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+                </svg>
+            </div>
+
+            <div class="stat-info">
+                <span>Sản phẩm đang hiển thị</span>
+                <strong id="productCount">0</strong>
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon green">
+                <svg viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="7" height="7"/>
+                    <rect x="14" y="3" width="7" height="7"/>
+                    <rect x="3" y="14" width="7" height="7"/>
+                    <rect x="14" y="14" width="7" height="7"/>
+                </svg>
+            </div>
+
+            <div class="stat-info">
+                <span>Tổng danh mục</span>
+                <strong id="categoryCount">0</strong>
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon orange">
+                <svg viewBox="0 0 24 24">
+                    <path d="M20 21a8 8 0 0 0-16 0"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+            </div>
+
+            <div class="stat-info">
+                <span>Tổng người dùng</span>
+                <strong id="userCount">0</strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- PRODUCT LIST -->
+
+    <section class="card" id="products">
+
+        <div class="card-head">
+
+            <div class="heading">
+
+                <div class="heading-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 3v18h18"/>
+                        <path d="m7 16 4-4 4 3 5-6"/>
+                    </svg>
+                </div>
+
+                <div>
+                    <h2>Danh sách sản phẩm</h2>
+                    <p>
+                        Hiển thị dữ liệu theo giá tăng dần
+                        và hỗ trợ lọc theo danh mục.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="badge green">
+                <svg viewBox="0 0 24 24">
+                    <path d="m3 16 4 4 4-4"/>
+                    <path d="M7 20V4"/>
+                </svg>
+                Giá thấp → cao
+            </div>
+
+        </div>
+
+
+        <div class="filter-row">
+
+            <div class="field">
+
+                <label for="categoryFilter">
+
+                    <svg viewBox="0 0 24 24">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+                    </svg>
+
+                    Lọc theo danh mục
+
+                </label>
+
+                <select id="categoryFilter">
+                    <option value="">Tất cả danh mục</option>
+                </select>
+
+            </div>
+
+
+            <button
+                class="btn-primary"
+                onclick="loadProducts()">
+
+                <svg viewBox="0 0 24 24">
+                    <polyline points="23 4 23 10 17 10"/>
+                    <polyline points="1 20 1 14 7 14"/>
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/>
+                    <path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/>
+                </svg>
+
+                Tải lại
+
+            </button>
+
+        </div>
+
+        <div id="productTable"></div>
+
+    </section>
+
+
+    <!-- FORMS -->
+
+    <div class="forms-grid">
+
+        <!-- PRODUCT FORM -->
+
+        <section class="card">
+
+            <div class="card-head">
+
+                <div class="heading">
+
+                    <div class="heading-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 20h9"/>
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+                        </svg>
+                    </div>
+
+                    <div>
+                        <h2>Quản lý sản phẩm</h2>
+                        <p>
+                            Thêm mới hoặc cập nhật thông tin sản phẩm.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="badge purple">
+                    CRUD Product
+                </div>
+
+            </div>
+
+            <input type="hidden" id="productId">
+
+
+            <div class="field-row">
+
+                <div class="field">
+
+                    <label for="productTitle">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M4 7V4h16v3"/>
+                            <path d="M9 20h6"/>
+                            <path d="M12 4v16"/>
+                        </svg>
+                        Tên sản phẩm
+                    </label>
+
+                    <input
+                        type="text"
+                        id="productTitle"
+                        placeholder="Ví dụ: Laptop Dell">
+
+                </div>
+
+
+                <div class="field">
+
+                    <label for="productQuantity">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M3 3v18h18"/>
+                            <path d="M7 16v-4"/>
+                            <path d="M12 16V8"/>
+                            <path d="M17 16V5"/>
+                        </svg>
+                        Số lượng
+                    </label>
+
+                    <input
+                        type="number"
+                        id="productQuantity"
+                        placeholder="Nhập số lượng">
+
+                </div>
+
+            </div>
+
+
+            <div class="field-row">
+
+                <div class="field">
+
+                    <label for="productPrice">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M16 8h-6a2 2 0 0 0 0 4h4a2 2 0 0 1 0 4H8"/>
+                            <path d="M12 18V6"/>
+                        </svg>
+                        Giá sản phẩm
+                    </label>
+
+                    <input
+                        type="number"
+                        id="productPrice"
+                        step="0.01"
+                        placeholder="Nhập giá">
+
+                </div>
+
+
+                <div class="field">
+
+                    <label for="productUser">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M20 21a8 8 0 0 0-16 0"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        Người dùng
+                    </label>
+
+                    <select id="productUser">
+                        <option value="">
+                            Chọn người dùng
+                        </option>
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="productCategory">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="3" y="3" width="7" height="7"/>
+                        <rect x="14" y="3" width="7" height="7"/>
+                        <rect x="3" y="14" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/>
+                    </svg>
+                    Danh mục
+                </label>
+
+                <select id="productCategory">
+                    <option value="">
+                        Chọn danh mục
+                    </option>
+                </select>
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="productDesc">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M4 6h16"/>
+                        <path d="M4 12h16"/>
+                        <path d="M4 18h10"/>
+                    </svg>
+                    Mô tả
+                </label>
+
+                <textarea
+                    id="productDesc"
+                    placeholder="Nhập mô tả sản phẩm"></textarea>
+
+            </div>
+
+
+            <div class="actions">
+
+                <button
+                    class="btn-primary"
+                    onclick="saveProduct()">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/>
+                        <polyline points="17 21 17 13 7 13 7 21"/>
+                        <polyline points="7 3 7 8 15 8"/>
+                    </svg>
+
+                    Lưu sản phẩm
+
+                </button>
+
+
+                <button
+                    class="btn-light"
+                    onclick="resetProductForm()">
+
+                    <svg viewBox="0 0 24 24">
+                        <polyline points="1 4 1 10 7 10"/>
+                        <path d="M3.51 15a9 9 0 1 0 .49-9.4L1 10"/>
+                    </svg>
+
+                    Làm mới
+
+                </button>
+
+            </div>
+
+            <div
+                id="productMessage"
+                class="message">
+            </div>
+
+        </section>
+
+
+        <!-- CATEGORY FORM -->
+
+        <section
+            class="card"
+            id="categories">
+
+            <div class="card-head">
+
+                <div class="heading">
+
+                    <div class="heading-icon">
+                        <svg viewBox="0 0 24 24">
+                            <rect x="3" y="3" width="7" height="7"/>
+                            <rect x="14" y="3" width="7" height="7"/>
+                            <rect x="3" y="14" width="7" height="7"/>
+                            <rect x="14" y="14" width="7" height="7"/>
+                        </svg>
+                    </div>
+
+                    <div>
+                        <h2>Quản lý danh mục</h2>
+                        <p>
+                            Thêm mới hoặc cập nhật danh mục.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="badge purple">
+                    CRUD Category
+                </div>
+
+            </div>
+
+            <input type="hidden" id="categoryId">
+
+
+            <div class="field">
+
+                <label for="categoryName">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20.59 13.41 11 3.83V3H4v7h.83l9.58 9.59a2 2 0 0 0 2.82 0l3.36-3.36a2 2 0 0 0 0-2.82Z"/>
+                        <line x1="7" x2="7.01" y1="6" y2="6"/>
+                    </svg>
+
+                    Tên danh mục
+
+                </label>
+
+                <input
+                    type="text"
+                    id="categoryName"
+                    placeholder="Ví dụ: Laptop">
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="categoryImages">
+
+                    <svg viewBox="0 0 24 24">
+                        <rect x="3" y="3" width="18" height="18" rx="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+
+                    Hình ảnh
+
+                </label>
+
+                <input
+                    type="text"
+                    id="categoryImages"
+                    placeholder="Ví dụ: laptop.jpg">
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="categoryUserIds">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+
+                    Mã người dùng
+
+                </label>
+
+                <input
+                    type="text"
+                    id="categoryUserIds"
+                    placeholder="Ví dụ: 1,2">
+
+                <div class="helper">
+                    Nhập nhiều mã người dùng và ngăn cách bằng dấu phẩy.
+                </div>
+
+            </div>
+
+
+            <div class="actions">
+
+                <button
+                    class="btn-primary"
+                    onclick="saveCategory()">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/>
+                        <polyline points="17 21 17 13 7 13 7 21"/>
+                        <polyline points="7 3 7 8 15 8"/>
+                    </svg>
+
+                    Lưu danh mục
+
+                </button>
+
+
+                <button
+                    class="btn-light"
+                    onclick="resetCategoryForm()">
+
+                    <svg viewBox="0 0 24 24">
+                        <polyline points="1 4 1 10 7 10"/>
+                        <path d="M3.51 15a9 9 0 1 0 .49-9.4L1 10"/>
+                    </svg>
+
+                    Làm mới
+
+                </button>
+
+            </div>
+
+            <div
+                id="categoryMessage"
+                class="message">
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <!-- CATEGORY LIST -->
+
+    <section class="card">
+
+        <div class="card-head">
+
+            <div class="heading">
+
+                <div class="heading-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M8 6h13"/>
+                        <path d="M8 12h13"/>
+                        <path d="M8 18h13"/>
+                        <path d="M3 6h.01"/>
+                        <path d="M3 12h.01"/>
+                        <path d="M3 18h.01"/>
+                    </svg>
+                </div>
+
+                <div>
+                    <h2>Danh sách danh mục</h2>
+                    <p>
+                        Danh sách danh mục và người dùng được liên kết.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="badge green">
+                Many-to-Many
+            </div>
+
+        </div>
+
+        <div id="categoryTable"></div>
+
+    </section>
+
+
+    <div class="footer">
+        Bài tập 8 • Spring Boot • GraphQL • SQL Server • AJAX
+    </div>
+
+</div>
+
+
+<div
+    id="toastWrap"
+    class="toast-wrap">
+</div>
+
+
+<script>
+
+    const graphqlUrl = "/graphql";
+
+    let products = [];
+    let categories = [];
+    let users = [];
+
+
+    async function graphqlRequest(query, variables = {}) {
+
+        const response =
+            await fetch(
+                graphqlUrl,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            query,
+                            variables
+                        })
+                }
+            );
+
+        const result =
+            await response.json();
+
+        if (result.errors) {
+
+            throw new Error(
+                result.errors
+                    .map(
+                        error =>
+                            error.message
+                    )
+                    .join("\n")
+            );
+        }
+
+        return result.data;
+    }
+
+
+    function updateStats() {
+
+        document.getElementById(
+            "productCount"
+        ).textContent =
+            products.length;
+
+        document.getElementById(
+            "categoryCount"
+        ).textContent =
+            categories.length;
+
+        document.getElementById(
+            "userCount"
+        ).textContent =
+            users.length;
+    }
+
+
+    function showToast(
+        message,
+        success = true
+    ) {
+
+        const wrap =
+            document.getElementById(
+                "toastWrap"
+            );
+
+        const toast =
+            document.createElement(
+                "div"
+            );
+
+        toast.className =
+            success
+                ? "toast success"
+                : "toast error";
+
+        toast.innerHTML = `
+            <svg viewBox="0 0 24 24">
+
+                ${
+                    success
+                        ?
+                        `
+                        <polyline
+                            points="
+                                20 6
+                                9 17
+                                4 12
+                            ">
+                        </polyline>
+                        `
+                        :
+                        `
+                        <circle
+                            cx="12"
+                            cy="12"
+                            r="10">
+                        </circle>
+
+                        <line
+                            x1="15"
+                            y1="9"
+                            x2="9"
+                            y2="15">
+                        </line>
+
+                        <line
+                            x1="9"
+                            y1="9"
+                            x2="15"
+                            y2="15">
+                        </line>
+                        `
+                }
+
+            </svg>
+
+            <div>
+
+                <strong>
+                    ${
+                        success
+                            ? "Thành công"
+                            : "Có lỗi xảy ra"
+                    }
+                </strong>
+
+                <span>
+                    ${escapeHtml(message)}
+                </span>
+
+            </div>
+        `;
+
+        wrap.appendChild(
+            toast
+        );
+
+        setTimeout(
+            () => {
+                toast.remove();
+            },
+            2800
+        );
+    }
+
+
+    async function loadBaseData() {
+
+        const query = `
+            query {
+
+                categories {
+                    id
+                    name
+                    images
+
+                    users {
+                        id
+                        fullname
+                    }
+                }
+
+                users {
+                    id
+                    fullname
+                    email
+                    phone
+                }
+            }
+        `;
+
+        const data =
+            await graphqlRequest(
+                query
+            );
+
+        categories =
+            data.categories;
+
+        users =
+            data.users;
+
+        renderCategorySelects();
+        renderUserSelect();
+        renderCategoryTable();
+
+        updateStats();
+    }
+
+
+    async function loadProducts() {
+
+        const categoryId =
+            document
+                .getElementById(
+                    "categoryFilter"
+                )
+                .value;
+
+        if (categoryId) {
+
+            const query = `
+                query(
+                    $categoryId: ID!
+                ) {
+
+                    productsByCategory(
+                        categoryId:
+                            $categoryId
+                    ) {
+
+                        id
+                        title
+                        quantity
+                        desc
+                        price
+
+                        user {
+                            id
+                            fullname
+                        }
+
+                        category {
+                            id
+                            name
+                        }
+                    }
+                }
+            `;
+
+            const data =
+                await graphqlRequest(
+                    query,
+                    {
+                        categoryId
+                    }
+                );
+
+            products =
+                data.productsByCategory;
+
+        } else {
+
+            const query = `
+                query {
+
+                    productsByPriceAsc {
+
+                        id
+                        title
+                        quantity
+                        desc
+                        price
+
+                        user {
+                            id
+                            fullname
+                        }
+
+                        category {
+                            id
+                            name
+                        }
+                    }
+                }
+            `;
+
+            const data =
+                await graphqlRequest(
+                    query
+                );
+
+            products =
+                data.productsByPriceAsc;
+        }
+
+        renderProductTable();
+
+        updateStats();
+    }
+
+
+    function renderProductTable() {
+
+        const container =
+            document.getElementById(
+                "productTable"
+            );
+
+        if (
+            products.length === 0
+        ) {
+
+            container.innerHTML = `
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+
+                        <svg viewBox="0 0 24 24">
+                            <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+                        </svg>
+
+                    </div>
+
+                    Chưa có sản phẩm để hiển thị.
+
+                </div>
+            `;
+
+            return;
+        }
+
+        const rows =
+            products
+                .map(
+                    product => `
+                        <tr>
+
+                            <td class="id-tag">
+                                #${product.id}
+                            </td>
+
+                            <td class="product-name">
+
+                                ${escapeHtml(
+                                    product.title
+                                )}
+
+                            </td>
+
+                            <td>
+                                ${
+                                    product.quantity
+                                    ?? ""
+                                }
+                            </td>
+
+                            <td class="price">
+
+                                ${Number(
+                                    product.price
+                                    ?? 0
+                                ).toLocaleString(
+                                    "vi-VN"
+                                )}
+                                VNĐ
+
+                            </td>
+
+                            <td>
+
+                                <span
+                                    class="
+                                        category-pill
+                                    ">
+
+                                    ${escapeHtml(
+                                        product
+                                            .category
+                                            ?.name
+                                        ?? ""
+                                    )}
+
+                                </span>
+
+                            </td>
+
+                            <td>
+
+                                ${escapeHtml(
+                                    product
+                                        .user
+                                        ?.fullname
+                                    ?? ""
+                                )}
+
+                            </td>
+
+                            <td>
+
+                                <button
+                                    class="
+                                        btn-sm
+                                        btn-edit
+                                    "
+                                    title="Sửa"
+                                    onclick="
+                                        editProduct(
+                                            '${product.id}'
+                                        )
+                                    ">
+
+                                    <svg
+                                        viewBox="
+                                            0 0 24 24
+                                        ">
+
+                                        <path
+                                            d="
+                                                M12
+                                                20h9
+                                            ">
+                                        </path>
+
+                                        <path
+                                            d="
+                                                M16.5
+                                                3.5
+                                                a2.12
+                                                2.12
+                                                0 0 1
+                                                3 3
+                                                L7 19
+                                                l-4 1
+                                                1-4Z
+                                            ">
+                                        </path>
+
+                                    </svg>
+
+                                </button>
+
+
+                                <button
+                                    class="
+                                        btn-sm
+                                        btn-delete
+                                    "
+                                    title="Xóa"
+                                    onclick="
+                                        deleteProduct(
+                                            '${product.id}'
+                                        )
+                                    ">
+
+                                    <svg
+                                        viewBox="
+                                            0 0 24 24
+                                        ">
+
+                                        <polyline
+                                            points="
+                                                3 6
+                                                5 6
+                                                21 6
+                                            ">
+                                        </polyline>
+
+                                        <path
+                                            d="
+                                                M19 6
+                                                l-1 14
+                                                H6
+                                                L5 6
+                                            ">
+                                        </path>
+
+                                    </svg>
+
+                                </button>
+
+                            </td>
+
+                        </tr>
+                    `
+                )
+                .join("");
+
+        container.innerHTML = `
+            <div class="table-wrap">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Mã</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Số lượng</th>
+                            <th>Giá</th>
+                            <th>Danh mục</th>
+                            <th>Người dùng</th>
+                            <th>Thao tác</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+                        ${rows}
+                    </tbody>
+
+                </table>
+
+            </div>
+        `;
+    }
+
+
+    function renderCategorySelects() {
+
+        const filter =
+            document.getElementById(
+                "categoryFilter"
+            );
+
+        const productCategory =
+            document.getElementById(
+                "productCategory"
+            );
+
+        filter.innerHTML =
+            `
+            <option value="">
+                Tất cả danh mục
+            </option>
+            `;
+
+        productCategory.innerHTML =
+            `
+            <option value="">
+                Chọn danh mục
+            </option>
+            `;
+
+        categories.forEach(
+            category => {
+
+                const option = `
+                    <option
+                        value="${category.id}">
+
+                        ${escapeHtml(
+                            category.name
+                        )}
+
+                    </option>
+                `;
+
+                filter.innerHTML +=
+                    option;
+
+                productCategory.innerHTML +=
+                    option;
+            }
+        );
+    }
+
+
+    function renderUserSelect() {
+
+        const productUser =
+            document.getElementById(
+                "productUser"
+            );
+
+        productUser.innerHTML =
+            `
+            <option value="">
+                Chọn người dùng
+            </option>
+            `;
+
+        users.forEach(
+            user => {
+
+                productUser.innerHTML += `
+                    <option
+                        value="${user.id}">
+
+                        ${escapeHtml(
+                            user.fullname
+                        )}
+
+                    </option>
+                `;
+            }
+        );
+    }
+
+
+    function editProduct(id) {
+
+        const product =
+            products.find(
+                item =>
+                    String(item.id)
+                    ===
+                    String(id)
+            );
+
+        if (!product) {
+            return;
+        }
+
+        document.getElementById(
+            "productId"
+        ).value =
+            product.id;
+
+        document.getElementById(
+            "productTitle"
+        ).value =
+            product.title ?? "";
+
+        document.getElementById(
+            "productQuantity"
+        ).value =
+            product.quantity ?? "";
+
+        document.getElementById(
+            "productPrice"
+        ).value =
+            product.price ?? "";
+
+        document.getElementById(
+            "productDesc"
+        ).value =
+            product.desc ?? "";
+
+        document.getElementById(
+            "productUser"
+        ).value =
+            product.user?.id ?? "";
+
+        document.getElementById(
+            "productCategory"
+        ).value =
+            product.category?.id
+            ?? "";
+
+        window.scrollTo({
+            top: 720,
+            behavior: "smooth"
+        });
+    }
+
+
+    async function saveProduct() {
+
+        const id =
+            document.getElementById(
+                "productId"
+            ).value;
+
+        const title =
+            document.getElementById(
+                "productTitle"
+            ).value.trim();
+
+        const quantity =
+            Number(
+                document.getElementById(
+                    "productQuantity"
+                ).value
+            );
+
+        const price =
+            Number(
+                document.getElementById(
+                    "productPrice"
+                ).value
+            );
+
+        const desc =
+            document.getElementById(
+                "productDesc"
+            ).value.trim();
+
+        const userId =
+            document.getElementById(
+                "productUser"
+            ).value;
+
+        const categoryId =
+            document.getElementById(
+                "productCategory"
+            ).value;
+
+        if (
+            !title
+            ||
+            !userId
+            ||
+            !categoryId
+        ) {
+
+            const message =
+                "Vui lòng nhập đầy đủ tên sản phẩm, người dùng và danh mục.";
+
+            showMessage(
+                "productMessage",
+                message,
+                false
+            );
+
+            showToast(
+                message,
+                false
+            );
+
+            return;
+        }
+
+        const input = {
+            title,
+            quantity,
+            desc,
+            price,
+            userId,
+            categoryId
+        };
+
+        try {
+
+            if (id) {
+
+                const mutation = `
+                    mutation(
+                        $id: ID!,
+                        $input:
+                            ProductInput!
+                    ) {
+
+                        updateProduct(
+                            id: $id,
+                            input: $input
+                        ) {
+                            id
+                            title
+                        }
+                    }
+                `;
+
+                await graphqlRequest(
+                    mutation,
+                    {
+                        id,
+                        input
+                    }
+                );
+
+                showMessage(
+                    "productMessage",
+                    "Cập nhật sản phẩm thành công.",
+                    true
+                );
+
+                showToast(
+                    "Cập nhật sản phẩm thành công."
+                );
+
+            } else {
+
+                const mutation = `
+                    mutation(
+                        $input:
+                            ProductInput!
+                    ) {
+
+                        createProduct(
+                            input: $input
+                        ) {
+                            id
+                            title
+                        }
+                    }
+                `;
+
+                await graphqlRequest(
+                    mutation,
+                    {
+                        input
+                    }
+                );
+
+                showMessage(
+                    "productMessage",
+                    "Thêm sản phẩm thành công.",
+                    true
+                );
+
+                showToast(
+                    "Thêm sản phẩm thành công."
+                );
+            }
+
+            resetProductForm(
+                false
+            );
+
+            await loadProducts();
+
+        } catch (error) {
+
+            showMessage(
+                "productMessage",
+                error.message,
+                false
+            );
+
+            showToast(
+                error.message,
+                false
+            );
+        }
+    }
+
+
+    async function deleteProduct(id) {
+
+        if (
+            !confirm(
+                "Bạn có chắc muốn xóa sản phẩm này không?"
+            )
+        ) {
+            return;
+        }
+
+        try {
+
+            const mutation = `
+                mutation(
+                    $id: ID!
+                ) {
+
+                    deleteProduct(
+                        id: $id
+                    )
+                }
+            `;
+
+            await graphqlRequest(
+                mutation,
+                {
+                    id
+                }
+            );
+
+            await loadProducts();
+
+            showToast(
+                "Xóa sản phẩm thành công."
+            );
+
+        } catch (error) {
+
+            showToast(
+                error.message,
+                false
+            );
+        }
+    }
+
+
+    function resetProductForm(
+        clearMessage = true
+    ) {
+
+        document.getElementById(
+            "productId"
+        ).value = "";
+
+        document.getElementById(
+            "productTitle"
+        ).value = "";
+
+        document.getElementById(
+            "productQuantity"
+        ).value = "";
+
+        document.getElementById(
+            "productPrice"
+        ).value = "";
+
+        document.getElementById(
+            "productDesc"
+        ).value = "";
+
+        document.getElementById(
+            "productUser"
+        ).value = "";
+
+        document.getElementById(
+            "productCategory"
+        ).value = "";
+
+        if (clearMessage) {
+
+            showMessage(
+                "productMessage",
+                "",
+                true
+            );
+        }
+    }
+
+
+    function renderCategoryTable() {
+
+        const container =
+            document.getElementById(
+                "categoryTable"
+            );
+
+        if (
+            categories.length === 0
+        ) {
+
+            container.innerHTML = `
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+
+                        <svg
+                            viewBox="
+                                0 0 24 24
+                            ">
+
+                            <rect
+                                x="3"
+                                y="3"
+                                width="7"
+                                height="7">
+                            </rect>
+
+                            <rect
+                                x="14"
+                                y="3"
+                                width="7"
+                                height="7">
+                            </rect>
+
+                            <rect
+                                x="3"
+                                y="14"
+                                width="7"
+                                height="7">
+                            </rect>
+
+                            <rect
+                                x="14"
+                                y="14"
+                                width="7"
+                                height="7">
+                            </rect>
+
+                        </svg>
+
+                    </div>
+
+                    Chưa có danh mục.
+
+                </div>
+            `;
+
+            return;
+        }
+
+        const rows =
+            categories
+                .map(
+                    category => {
+
+                        const userNames =
+                            category.users
+                                ?.map(
+                                    user =>
+                                        escapeHtml(
+                                            user.fullname
+                                        )
+                                )
+                                .join(", ")
+                            ?? "";
+
+                        return `
+                            <tr>
+
+                                <td class="id-tag">
+                                    #${category.id}
+                                </td>
+
+                                <td
+                                    class="
+                                        product-name
+                                    ">
+
+                                    ${escapeHtml(
+                                        category.name
+                                    )}
+
+                                </td>
+
+                                <td>
+
+                                    ${escapeHtml(
+                                        category.images
+                                        ?? ""
+                                    )}
+
+                                </td>
+
+                                <td>
+                                    ${userNames}
+                                </td>
+
+                                <td>
+
+                                    <button
+                                        class="
+                                            btn-sm
+                                            btn-edit
+                                        "
+                                        title="Sửa"
+                                        onclick="
+                                            editCategory(
+                                                '${category.id}'
+                                            )
+                                        ">
+
+                                        <svg
+                                            viewBox="
+                                                0 0 24 24
+                                            ">
+
+                                            <path
+                                                d="
+                                                    M12
+                                                    20h9
+                                                ">
+                                            </path>
+
+                                            <path
+                                                d="
+                                                    M16.5
+                                                    3.5
+                                                    a2.12
+                                                    2.12
+                                                    0 0 1
+                                                    3 3
+                                                    L7 19
+                                                    l-4 1
+                                                    1-4Z
+                                                ">
+                                            </path>
+
+                                        </svg>
+
+                                    </button>
+
+
+                                    <button
+                                        class="
+                                            btn-sm
+                                            btn-delete
+                                        "
+                                        title="Xóa"
+                                        onclick="
+                                            deleteCategory(
+                                                '${category.id}'
+                                            )
+                                        ">
+
+                                        <svg
+                                            viewBox="
+                                                0 0 24 24
+                                            ">
+
+                                            <polyline
+                                                points="
+                                                    3 6
+                                                    5 6
+                                                    21 6
+                                                ">
+                                            </polyline>
+
+                                            <path
+                                                d="
+                                                    M19 6
+                                                    l-1 14
+                                                    H6
+                                                    L5 6
+                                                ">
+                                            </path>
+
+                                        </svg>
+
+                                    </button>
+
+                                </td>
+
+                            </tr>
+                        `;
+                    }
+                )
+                .join("");
+
+        container.innerHTML = `
+            <div class="table-wrap">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Mã</th>
+                            <th>Tên danh mục</th>
+                            <th>Hình ảnh</th>
+                            <th>Người dùng</th>
+                            <th>Thao tác</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+                        ${rows}
+                    </tbody>
+
+                </table>
+
+            </div>
+        `;
+    }
+
+
+    function editCategory(id) {
+
+        const category =
+            categories.find(
+                item =>
+                    String(item.id)
+                    ===
+                    String(id)
+            );
+
+        if (!category) {
+            return;
+        }
+
+        document.getElementById(
+            "categoryId"
+        ).value =
+            category.id;
+
+        document.getElementById(
+            "categoryName"
+        ).value =
+            category.name ?? "";
+
+        document.getElementById(
+            "categoryImages"
+        ).value =
+            category.images ?? "";
+
+        document.getElementById(
+            "categoryUserIds"
+        ).value =
+            category.users
+                ?.map(
+                    user =>
+                        user.id
+                )
+                .join(",")
+            ?? "";
+
+        window.scrollTo({
+            top: 720,
+            behavior: "smooth"
+        });
+    }
+
+
+    async function saveCategory() {
+
+        const id =
+            document.getElementById(
+                "categoryId"
+            ).value;
+
+        const name =
+            document.getElementById(
+                "categoryName"
+            ).value.trim();
+
+        const images =
+            document.getElementById(
+                "categoryImages"
+            ).value.trim();
+
+        const userIds =
+            document.getElementById(
+                "categoryUserIds"
+            )
+                .value
+                .split(",")
+                .map(
+                    value =>
+                        value.trim()
+                )
+                .filter(
+                    value =>
+                        value !== ""
+                );
+
+        if (!name) {
+
+            const message =
+                "Vui lòng nhập tên danh mục.";
+
+            showMessage(
+                "categoryMessage",
+                message,
+                false
+            );
+
+            showToast(
+                message,
+                false
+            );
+
+            return;
+        }
+
+        const input = {
+            name,
+            images,
+            userIds
+        };
+
+        try {
+
+            if (id) {
+
+                const mutation = `
+                    mutation(
+                        $id: ID!,
+                        $input:
+                            CategoryInput!
+                    ) {
+
+                        updateCategory(
+                            id: $id,
+                            input: $input
+                        ) {
+                            id
+                            name
+                        }
+                    }
+                `;
+
+                await graphqlRequest(
+                    mutation,
+                    {
+                        id,
+                        input
+                    }
+                );
+
+                showMessage(
+                    "categoryMessage",
+                    "Cập nhật danh mục thành công.",
+                    true
+                );
+
+                showToast(
+                    "Cập nhật danh mục thành công."
+                );
+
+            } else {
+
+                const mutation = `
+                    mutation(
+                        $input:
+                            CategoryInput!
+                    ) {
+
+                        createCategory(
+                            input: $input
+                        ) {
+                            id
+                            name
+                        }
+                    }
+                `;
+
+                await graphqlRequest(
+                    mutation,
+                    {
+                        input
+                    }
+                );
+
+                showMessage(
+                    "categoryMessage",
+                    "Thêm danh mục thành công.",
+                    true
+                );
+
+                showToast(
+                    "Thêm danh mục thành công."
+                );
+            }
+
+            resetCategoryForm(
+                false
+            );
+
+            await loadBaseData();
+            await loadProducts();
+
+        } catch (error) {
+
+            showMessage(
+                "categoryMessage",
+                error.message,
+                false
+            );
+
+            showToast(
+                error.message,
+                false
+            );
+        }
+    }
+
+
+    async function deleteCategory(id) {
+
+        if (
+            !confirm(
+                "Bạn có chắc muốn xóa danh mục này không?"
+            )
+        ) {
+            return;
+        }
+
+        try {
+
+            const mutation = `
+                mutation(
+                    $id: ID!
+                ) {
+
+                    deleteCategory(
+                        id: $id
+                    )
+                }
+            `;
+
+            await graphqlRequest(
+                mutation,
+                {
+                    id
+                }
+            );
+
+            await loadBaseData();
+            await loadProducts();
+
+            showToast(
+                "Xóa danh mục thành công."
+            );
+
+        } catch (error) {
+
+            showToast(
+                error.message,
+                false
+            );
+        }
+    }
+
+
+    function resetCategoryForm(
+        clearMessage = true
+    ) {
+
+        document.getElementById(
+            "categoryId"
+        ).value = "";
+
+        document.getElementById(
+            "categoryName"
+        ).value = "";
+
+        document.getElementById(
+            "categoryImages"
+        ).value = "";
+
+        document.getElementById(
+            "categoryUserIds"
+        ).value = "";
+
+        if (clearMessage) {
+
+            showMessage(
+                "categoryMessage",
+                "",
+                true
+            );
+        }
+    }
+
+
+    function showMessage(
+        elementId,
+        message,
+        success
+    ) {
+
+        const element =
+            document.getElementById(
+                elementId
+            );
+
+        element.textContent =
+            message;
+
+        element.className =
+            success
+                ? "message success"
+                : "message error";
+    }
+
+
+    function escapeHtml(value) {
+
+        return String(
+            value ?? ""
+        )
+            .replaceAll(
+                "&",
+                "&amp;"
+            )
+            .replaceAll(
+                "<",
+                "&lt;"
+            )
+            .replaceAll(
+                ">",
+                "&gt;"
+            )
+            .replaceAll(
+                '"',
+                "&quot;"
+            )
+            .replaceAll(
+                "'",
+                "&#039;"
+            );
+    }
+
+
+    document
+        .getElementById(
+            "categoryFilter"
+        )
+        .addEventListener(
+            "change",
+            loadProducts
+        );
+
+
+    async function start() {
+
+        try {
+
+            await loadBaseData();
+
+            await loadProducts();
+
+        } catch (error) {
+
+            document.getElementById(
+                "productTable"
+            ).innerHTML = `
+                <div
+                    class="
+                        empty-state
+                        error
+                    ">
+
+                    ${escapeHtml(
+                        error.message
+                    )}
+
+                </div>
+            `;
+
+            showToast(
+                error.message,
+                false
+            );
+        }
+    }
+
+
+    start();
+
+</script>
+
+</body>
+</html>
